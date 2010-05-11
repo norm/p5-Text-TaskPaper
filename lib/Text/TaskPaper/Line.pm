@@ -42,4 +42,38 @@ sub add_children_from_file {
     # all files contain at least a newline (empty files are acceptable)
     return "$content\n";
 }
+
+sub extract_tags_from_line {
+    my $self = shift;
+    my $line = shift;
+    
+    my %tags;
+    my $find_tag = qr{
+            (?: ^ | \s )                # @ must be at the start of the word
+            @
+            (?|                         # must be followed by one of:
+                    ( \w+ )                     # $1: the tag
+                    (?: \( ( [^\)]+ ) \) )      # $2: parameter
+                |
+                    ( \w+ )                     # $1: the tag
+                |
+                    ()                          # $1: empty
+                    (?: \( ( [^\)]+ ) \) )      # $2: parameter
+            )
+            \s?
+        }x;
+    
+    while ( $line =~ s{$find_tag}{ }x ) {
+        $tags{ $1 } = []
+            unless defined $tags{ $1 };
+        push( @{$tags{ $1 }}, $2 )
+            if defined $2;
+    }
+    
+    # remove any leading/trailing whitespace
+    $line =~ s{^ \s* (.*?) \s* $}{$1}x;
+    
+    return( $line, \%tags );
+}
+
 1;
