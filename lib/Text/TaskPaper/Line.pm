@@ -78,6 +78,11 @@ sub extract_tags_from_line {
     my $self = shift;
     my $line = shift;
     
+    # preserve leading and trailing whitespace
+    $line =~ s{^ (\s*) (.*?) (\s*) $}{$2}x;
+    my $leading  = $1 // '';
+    my $trailing = $3 // '';
+    
     my %tags;
     my $find_tag = qr{
             (?: ^ | \s )                # @ must be at the start of the word
@@ -101,8 +106,11 @@ sub extract_tags_from_line {
             if defined $2;
     }
     
-    # remove any leading/trailing whitespace
+    # remove any replacement-induced extra whitespace
     $line =~ s{^ \s* (.*?) \s* $}{$1}x;
+    
+    # restore original whitespace
+    $line = "${leading}${line}${trailing}";
     
     return( $line, \%tags );
 }
