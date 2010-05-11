@@ -4,6 +4,13 @@ use Modern::Perl;
 
 use IO::All     -utf8;
 
+use Text::TaskPaper::Note;
+use Text::TaskPaper::Project;
+use Text::TaskPaper::Task;
+
+# This is sorted according to precedence.
+use constant TYPES => qw( Task Project Note );
+
 
 
 sub new {
@@ -43,6 +50,30 @@ sub add_children_from_file {
     return "$content\n";
 }
 
+sub parse_line {
+    my $self = shift;
+    my $line = shift;
+    
+    my( $text, $tags ) = $self->extract_tags_from_line( $line );
+    
+    TYPE:
+    foreach my $type ( TYPES ) {
+        no strict 'refs';
+        my $try    = "Text::TaskPaper::${type}::test_type";
+        my $parsed = &$try( $text );
+        
+        if ( $parsed ) {
+            return {
+                    type => $type,
+                    text => $parsed,
+                    tags => $tags,
+                };
+        }
+    }
+    
+    return;
+}
+
 sub extract_tags_from_line {
     my $self = shift;
     my $line = shift;
@@ -74,6 +105,46 @@ sub extract_tags_from_line {
     $line =~ s{^ \s* (.*?) \s* $}{$1}x;
     
     return( $line, \%tags );
+}
+
+sub type {
+    # return the type of this line
+}
+
+sub text {
+    # return the text of this line
+}
+
+sub output {
+    # return this line, and all of its children, as text
+}
+
+sub output_line {
+    # return this line as text
+}
+
+sub items {
+    # list all items that are first-generation children of this line
+}
+
+sub projects {
+    # return the projects that are first-generation children of this line
+}
+
+sub tasks {
+    # return the tasks that are first-generation children of this line
+}
+
+sub notes {
+    # return the notes that are first-generation children of this line
+}
+
+sub tags {
+    # return the tags that are children of this line
+}
+
+sub items_for_tag {
+    # return the items that the current tag/tags apply to
 }
 
 1;
