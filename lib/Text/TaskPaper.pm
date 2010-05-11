@@ -1,5 +1,6 @@
 package Text::TaskPaper;
 
+use Modern::Perl;
 use Text::TaskPaper::Line;
 
 sub new {
