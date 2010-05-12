@@ -17,11 +17,16 @@ sub new {
     my $class = shift;
     my %args  = @_;
     
-    my $self = {};
+    my $self = {
+            children => [],
+        };
     bless $self, $class;
     
-    if ( defined $args{'type'} ) {
-        %$self = %args;
+    $self->initialise();
+    
+    if ( defined $args{'type'} || defined $self->{'type'} ) {
+        # append arguments, not overwrite
+        %$self = ( %$self, %args );
     }
     else {
         if ( defined $args{'string'} ) {
@@ -34,6 +39,10 @@ sub new {
     }
     
     return $self;
+}
+
+sub initialise {
+    # this space intentionally left blank
 }
 
 sub add_children_from_string {
@@ -135,7 +144,7 @@ sub get_object_for_line {
         when( 'Project' ) {
             $object = Text::TaskPaper::Project->new( %$parsed );
         }
-        when( 'Note' ) {
+        default {
             $object = Text::TaskPaper::Note->new( %$parsed );
         }
     }
@@ -146,6 +155,52 @@ sub get_object_for_line {
 sub get_type {
     my $self = shift;
     return $self->{'type'};
+}
+
+sub get_items {
+    my $self = shift;
+    return @{$self->{'children'}};
+}
+
+sub add_child {
+    my $self = shift;
+    my %args = @_;
+    
+    my $object;
+    given ( $args{'type'} ) {
+        when( 'Task' ) {
+            $object = Text::TaskPaper::Task->new( %args );
+        }
+        when( 'Project' ) {
+            $object = Text::TaskPaper::Project->new( %args );
+        }
+        default {
+            $object = Text::TaskPaper::Note->new( %args );
+        }
+    }
+    
+    push @{$self->{'children'}}, $object;
+}
+
+sub add_task {
+    my $self = shift;
+    my %args = @_;
+    
+    $self->add_child( %args, type => 'Task' );
+}
+
+sub add_note {
+    my $self = shift;
+    my %args = @_;
+    
+    $self->add_child( %args, type => 'Note' );
+}
+
+sub add_project {
+    my $self = shift;
+    my %args = @_;
+    
+    $self->add_child( %args, type => 'Project' );
 }
 
 sub text {

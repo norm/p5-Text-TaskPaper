@@ -5,6 +5,11 @@ use base 'Text::TaskPaper::Line';
 
 
 
+sub initialise {
+    my $self = shift;
+    $self->{'type'} = 'Project';
+}
+
 sub test_type {
     my $text = shift;
     
