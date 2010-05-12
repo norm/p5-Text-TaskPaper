@@ -20,12 +20,17 @@ sub new {
     my $self = {};
     bless $self, $class;
     
-    if ( defined $args{'string'} ) {
-        $self->add_children_from_string( $args{'string'} );
+    if ( defined $args{'type'} ) {
+        %$self = %args;
     }
-    elsif ( defined $args{'file'} ) {
-        $self->add_children_from_file( $args{'file'} )
-            or return;
+    else {
+        if ( defined $args{'string'} ) {
+            $self->add_children_from_string( $args{'string'} );
+        }
+        elsif ( defined $args{'file'} ) {
+            $self->add_children_from_file( $args{'file'} )
+                or return;
+        }
     }
     
     return $self;
@@ -124,16 +129,23 @@ sub get_object_for_line {
     my $object;
     
     given ( $parsed->{'type'} ) {
-        when( 'Task' )    { $object = Text::TaskPaper::Task->new(); }
-        when( 'Project' ) { $object = Text::TaskPaper::Project->new(); }
-        when( 'Note' )    { $object = Text::TaskPaper::Note->new(); }
+        when( 'Task' ) {
+            $object = Text::TaskPaper::Task->new( %$parsed );
+        }
+        when( 'Project' ) {
+            $object = Text::TaskPaper::Project->new( %$parsed );
+        }
+        when( 'Note' ) {
+            $object = Text::TaskPaper::Note->new( %$parsed );
+        }
     }
     
     return $object;
 }
 
-sub type {
-    # return the type of this line
+sub get_type {
+    my $self = shift;
+    return $self->{'type'};
 }
 
 sub text {
