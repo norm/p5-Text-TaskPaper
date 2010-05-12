@@ -1,6 +1,7 @@
 package Text::TaskPaper::Note;
 
 use Modern::Perl;
+use base 'Text::TaskPaper::Line';
 
 
 

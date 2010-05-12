@@ -115,6 +115,23 @@ sub extract_tags_from_line {
     return( $line, \%tags );
 }
 
+sub get_object_for_line {
+    my $self = shift;
+    my $line = shift;
+    
+    my $parsed = $self->parse_line( $line );
+    my $type   = $parsed->{'type'};
+    my $object;
+    
+    given ( $parsed->{'type'} ) {
+        when( 'Task' )    { $object = Text::TaskPaper::Task->new(); }
+        when( 'Project' ) { $object = Text::TaskPaper::Project->new(); }
+        when( 'Note' )    { $object = Text::TaskPaper::Note->new(); }
+    }
+    
+    return $object;
+}
+
 sub type {
     # return the type of this line
 }
