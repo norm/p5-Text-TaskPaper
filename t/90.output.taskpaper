@@ -1,0 +1,19 @@
+I am an introductory note.
+
+- Project-less @first task. @done
+- Aimless task.
+
+First Project: @first
+	- @done First task.
+	- Second task. @due(tuesday)
+		Second task notes.
+	- @due(2099-12-31) Third task.
+		Third task, first note.
+		Third task, second note.
+
+Second Project:
+	Dependent Project:
+		- Task @done one.
+		- @due Task two.
+	Supernumerary Project:
+		I don't really have any tasks. Yet.

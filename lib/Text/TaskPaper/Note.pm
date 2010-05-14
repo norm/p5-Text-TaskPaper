@@ -17,4 +17,10 @@ sub test_type {
     return $text;
 }
 
+sub as_text {
+    my $self = shift;
+    
+    return $self->{'text'};
+}
+
 1;

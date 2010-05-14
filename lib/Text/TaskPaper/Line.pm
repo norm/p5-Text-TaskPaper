@@ -257,16 +257,61 @@ sub add_project {
     $self->add_child( %args, type => 'Project' );
 }
 
-sub text {
-    # return the text of this line
-}
-
 sub output {
-    # return this line, and all of its children, as text
+    my $self = shift;
+    
+    my $output = $self->output_line();
+    my $type   = $self->get_type();
+    my $indent = defined $type ? "\t" : '';
+    
+    my @children = $self->get_items();
+    foreach my $child ( @children ) {
+        my $child_output = $child->output();
+        $child_output =~ s{^}{$indent}gm;
+        
+        $output .= $child_output;
+    }
+    
+    return $output;
 }
 
 sub output_line {
-    # return this line as text
+    my $self = shift;
+    
+    my $type = $self->get_type();
+    return unless $type;
+    
+    my $text = $self->as_text() // '';
+    my $tags = $self->tags_as_text() // '';
+    
+    return "${text}${tags}\n";
+}
+
+sub as_text {
+    # 'Line' type is a placeholder for the start
+    # of the document, and so has no text.
+    return;
+}
+
+sub tags_as_text {
+    my $self = shift;
+    
+    my $tags = $self->{'tags'};
+    my $text;
+    
+    foreach my $tag ( sort keys %$tags ) {
+        # if there are parameters to this tag
+        if ( scalar @{$tags->{ $tag }} ) {
+            foreach my $param ( @{$tags->{ $tag }} ) {
+                $text .= " \@${tag}(${param})";
+            }
+        }
+        else {
+            $text .= " \@$tag";
+        }
+    }
+    
+    return $text;
 }
 
 sub get_projects {
