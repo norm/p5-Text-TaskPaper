@@ -1,0 +1,12 @@
+- Task
+Note.
+Project:
+	- Task
+	- Second task
+		Note for the second task.
+	- Task with subtasks:
+		- First
+		- Second
+
+Second:
+	- Task
