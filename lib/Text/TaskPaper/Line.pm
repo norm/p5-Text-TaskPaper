@@ -196,6 +196,11 @@ sub get_object_for_line {
     return $object;
 }
 
+sub get_text {
+    my $self = shift;
+    return $self->{'text'};
+}
+
 sub get_type {
     my $self = shift;
     return $self->{'type'};
@@ -264,28 +269,146 @@ sub output_line {
     # return this line as text
 }
 
-sub items {
-    # list all items that are first-generation children of this line
+sub get_projects {
+    my $self = shift;
+    
+    my @children = $self->get_items();
+    my @projects;
+    
+    foreach my $child ( @children ) {
+        push @projects, $child
+            if $child->get_type() eq 'Project';
+    }
+    
+    return @projects;
 }
 
-sub projects {
-    # return the projects that are first-generation children of this line
+sub get_all_projects {
+    my $self = shift;
+    
+    my @children = $self->get_items();
+    my @projects;
+    
+    foreach my $child ( @children ) {
+        push @projects, $child->get_all_projects();
+        push @projects, $child
+            if $child->get_type() eq 'Project';
+    }
+    
+    return @projects;
 }
 
-sub tasks {
-    # return the tasks that are first-generation children of this line
+sub get_tasks {
+    my $self = shift;
+    
+    my @children = $self->get_items();
+    my @tasks;
+    
+    foreach my $child ( @children ) {
+        push @tasks, $child
+            if $child->get_type() eq 'Task';
+    }
+    
+    return @tasks;
 }
 
-sub notes {
-    # return the notes that are first-generation children of this line
+sub get_all_tasks {
+    my $self = shift;
+    
+    my @children = $self->get_items();
+    my @tasks;
+    
+    foreach my $child ( @children ) {
+        push @tasks, $child->get_all_tasks();
+        push @tasks, $child
+            if $child->get_type() eq 'Task';
+    }
+    
+    return @tasks;
 }
 
-sub tags {
-    # return the tags that are children of this line
+sub get_notes {
+    my $self = shift;
+    
+    my @children = $self->get_items();
+    my @notes;
+    
+    foreach my $child ( @children ) {
+        push @notes, $child
+            if $child->get_type() eq 'Note';
+    }
+    
+    return @notes;
 }
 
-sub items_for_tag {
-    # return the items that the current tag/tags apply to
+sub get_all_notes {
+    my $self = shift;
+    
+    my @children = $self->get_items();
+    my @notes;
+    
+    foreach my $child ( @children ) {
+        push @notes, $child->get_all_notes();
+        push @notes, $child
+            if $child->get_type() eq 'Note';
+    }
+    
+    return @notes;
+}
+
+sub is_tagged {
+    my $self  = shift;
+    my $tag   = shift;
+    my $param = shift;
+    
+    my $tags = $self->{'tags'};
+    
+    if ( defined $tags->{ $tag } ) {
+        if ( defined $param ) {
+            foreach my $check ( @{$tags->{ $tag }} ) {
+                return 1
+                    if $check eq $param;
+            }
+        }
+        else {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+sub get_tagged {
+    my $self  = shift;
+    my $tag   = shift;
+    my $param = shift;
+    
+    my @children = $self->get_items();
+    my @tagged;
+    
+    foreach my $child ( @children ) {
+        push @tagged, $child
+            if $child->is_tagged( $tag, $param );
+    }
+    
+    return @tagged;
+}
+
+sub get_all_tagged {
+    my $self  = shift;
+    my $tag   = shift;
+    my $param = shift;
+    
+    my @children = $self->get_items();
+    my @tagged;
+    
+    foreach my $child ( @children ) {
+        push @tagged, $child->get_all_tagged( $tag, $param );
+        push @tagged, $child
+            if $child->is_tagged( $tag, $param );
+    }
+    
+    return @tagged;
 }
 
 1;
