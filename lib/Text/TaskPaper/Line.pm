@@ -19,6 +19,7 @@ sub new {
     
     my $self = {
             children => [],
+            tags     => {},
         };
     bless $self, $class;
     
@@ -48,6 +49,48 @@ sub initialise {
 sub add_children_from_string {
     my $self   = shift;
     my $string = shift;
+    
+    my @lines           = split m{\n}, $string;
+    my $previous_indent = -1;
+    
+    my @objects;
+    my $add_child_to_parent = sub {
+            my $item   = pop @objects;
+            my $parent = pop @objects;
+            
+            $parent->add_child( object => $item );
+            push @objects, $parent;
+        };
+    
+    push @objects, $self;
+    
+    foreach my $text ( @lines ) {
+        my $tabs = '';
+        
+        # extract the tab indentation
+        $tabs = $1
+            if $text =~ s{^ ( \t+ ) }{}gx;
+        
+        my $indent = length $tabs;
+        my $object = $self->get_object_for_line( $text );
+        
+        # if the indentation has stayed the same or decreased,
+        # add previous item(s) on the stack to their previous
+        # object on the stack (which will be their parent)
+        foreach ( 0 .. 0 - ( $indent - $previous_indent ) ) {
+            &$add_child_to_parent;
+        }
+        
+        push @objects, $object;
+        $previous_indent = $indent;
+    }
+    
+    # add any remaining items on the stack to their previous
+    # object on the stack (which will be their parent, or
+    # $self at the end)
+    foreach ( 0 .. $previous_indent ) {
+        &$add_child_to_parent;
+    }
 }
 
 sub add_children_from_file {
@@ -61,7 +104,8 @@ sub add_children_from_file {
     return unless defined $content;
     
     # all files contain at least a newline (empty files are acceptable)
-    return "$content\n";
+    $self->add_children_from_string( "$content\n" );
+    return 1;
 }
 
 sub parse_line {
@@ -76,7 +120,7 @@ sub parse_line {
         my $try    = "Text::TaskPaper::${type}::test_type";
         my $parsed = &$try( $text );
         
-        if ( $parsed ) {
+        if ( defined $parsed ) {
             return {
                     type => $type,
                     text => $parsed,
@@ -167,15 +211,20 @@ sub add_child {
     my %args = @_;
     
     my $object;
-    given ( $args{'type'} ) {
-        when( 'Task' ) {
-            $object = Text::TaskPaper::Task->new( %args );
-        }
-        when( 'Project' ) {
-            $object = Text::TaskPaper::Project->new( %args );
-        }
-        default {
-            $object = Text::TaskPaper::Note->new( %args );
+    if ( defined $args{'object'} ) {
+        $object = $args{'object'};
+    }
+    else {
+        given ( $args{'type'} ) {
+            when( 'Task' ) {
+                $object = Text::TaskPaper::Task->new( %args );
+            }
+            when( 'Project' ) {
+                $object = Text::TaskPaper::Project->new( %args );
+            }
+            default {
+                $object = Text::TaskPaper::Note->new( %args );
+            }
         }
     }
     
