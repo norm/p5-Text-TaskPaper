@@ -36,6 +36,7 @@ sub new {
         elsif ( defined $args{'file'} ) {
             $self->add_children_from_file( $args{'file'} )
                 or return;
+            $self->set_filename( $args{'file'} );
         }
     }
     
@@ -454,6 +455,46 @@ sub get_all_tagged {
     }
     
     return @tagged;
+}
+
+sub get_filename {
+    my $self = shift;
+    return $self->{'filename'};
+}
+sub set_filename {
+    my $self = shift;
+    my $file = shift;
+    $self->{'filename'} = $file;
+}
+
+sub save {
+    my $self = shift;
+    
+    # return error on undef
+    $self->save_as( $self->get_filename() );
+}
+
+sub save_as {
+    my $self     = shift;
+    my $filename = shift;
+    
+    return 0 unless defined $filename;
+    
+    my $error  = 0;
+    my $errors =  sub {
+            my $text = shift;
+            say STDERR $text;
+            $error++;
+        };
+    
+    my $handle = io->file( $filename );
+    $handle->errors( $errors );
+    
+    my $output = $self->output();
+    $handle->print( $output );
+    
+    return 0 if $error;
+    return 1;
 }
 
 1;
