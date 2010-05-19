@@ -15,7 +15,14 @@ use constant TYPES => qw( Task Project Note );
 
 sub new {
     my $class = shift;
-    my %args  = @_;
+    
+    my %args;
+    if ( 1 == scalar @_ ) {
+        $args{'text'} = shift;
+    }
+    else {
+        %args = @_;
+    }
     
     my $self = {
             children => [],
@@ -28,6 +35,19 @@ sub new {
     if ( defined $args{'type'} || defined $self->{'type'} ) {
         # append arguments, not overwrite
         %$self = ( %$self, %args );
+        
+        # check text for tags
+        my( $text, $tags ) = $self->extract_tags_from_line( $self->{'text'} );
+        if ( scalar %$tags ) {
+            $self->{'text'} = $text;
+            $self->{'tags'} = $tags;
+        }
+        
+        # accept tags as a string
+        if ( 'HASH' ne ref $self->{'tags'} ) {
+            ( undef, $self->{'tags'} )
+                = $self->extract_tags_from_line( $self->{'tags'} );
+        }
     }
     else {
         if ( defined $args{'string'} ) {
@@ -135,7 +155,7 @@ sub parse_line {
 
 sub extract_tags_from_line {
     my $self = shift;
-    my $line = shift;
+    my $line = shift // '';
     
     # preserve leading and trailing whitespace
     $line =~ s{^ (\s*) (.*?) (\s*) $}{$2}x;
@@ -205,6 +225,11 @@ sub get_text {
 sub get_type {
     my $self = shift;
     return $self->{'type'};
+}
+
+sub get_tags {
+    my $self = shift;
+    return %{$self->{'tags'}};
 }
 
 sub get_items {
