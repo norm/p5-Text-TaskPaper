@@ -28,3 +28,12 @@ sub as_text {
 }
 
 1;
+
+=head1 NAME
+
+B<Text::TaskPaper::Task> - an individual line of a document of TaskPaper
+format.
+
+=head1 SEE ALSO
+
+Refer to the documentation of L<Text::TaskPaper>.

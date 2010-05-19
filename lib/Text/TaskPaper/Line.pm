@@ -531,3 +531,13 @@ sub save_as {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+B<Text::TaskPaper::Line> - a document of TaskPaper format.
+
+=head1 SEE ALSO
+
+Refer to the documentation of L<Text::TaskPaper>.
