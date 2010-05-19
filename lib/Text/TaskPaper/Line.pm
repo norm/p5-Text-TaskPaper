@@ -79,7 +79,7 @@ sub add_children_from_string {
             my $item   = pop @objects;
             my $parent = pop @objects;
             
-            $parent->add_child( object => $item );
+            $parent->add_child( $item );
             push @objects, $parent;
         };
     
@@ -239,22 +239,28 @@ sub get_items {
 
 sub add_child {
     my $self = shift;
-    my %args = @_;
     
     my $object;
-    if ( defined $args{'object'} ) {
-        $object = $args{'object'};
+    if ( 1 == scalar @_ ) {
+        $object = shift;
     }
     else {
-        given ( $args{'type'} ) {
-            when( 'Task' ) {
-                $object = Text::TaskPaper::Task->new( %args );
-            }
-            when( 'Project' ) {
-                $object = Text::TaskPaper::Project->new( %args );
-            }
-            default {
-                $object = Text::TaskPaper::Note->new( %args );
+        my %args = @_;
+
+        if ( defined $args{'object'} ) {
+            $object = $args{'object'};
+        }
+        else {
+            given ( $args{'type'} ) {
+                when( 'Task' ) {
+                    $object = Text::TaskPaper::Task->new( %args );
+                }
+                when( 'Project' ) {
+                    $object = Text::TaskPaper::Project->new( %args );
+                }
+                default {
+                    $object = Text::TaskPaper::Note->new( %args );
+                }
             }
         }
     }
