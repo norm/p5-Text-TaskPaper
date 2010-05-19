@@ -28,7 +28,7 @@ push @structure, $note;
 {
     $tp = Text::TaskPaper->new( string => $document );
     
-    @document = $tp->get_items();
+    @document = $tp->get_lines();
     is_deeply( \@structure, \@document )
         or print Dumper \@document;
 }
@@ -37,7 +37,7 @@ push @structure, $note;
 {
     $tp = Text::TaskPaper->new( file => DOCUMENT );
     
-    @document = $tp->get_items();
+    @document = $tp->get_lines();
     is_deeply( \@structure, \@document )
         or print Dumper \@document;
 }

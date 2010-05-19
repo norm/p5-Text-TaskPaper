@@ -50,7 +50,7 @@ my( $tp, $handle, $document, $output, $temp_file, $content );
     close $handle;
     
     $tp = Text::TaskPaper->new( file => $temp_file );
-    ok( scalar $tp->get_items() == 1 );
+    ok( scalar $tp->get_lines() == 1 );
     ok( $tp->output() eq $content );
     $tp->add_task( text => 'Second task.' );
     ok( $tp->save() );

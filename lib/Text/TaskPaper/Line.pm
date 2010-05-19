@@ -232,7 +232,7 @@ sub get_tags {
     return %{$self->{'tags'}};
 }
 
-sub get_items {
+sub get_lines {
     my $self = shift;
     return @{$self->{'children'}};
 }
@@ -296,7 +296,7 @@ sub output {
     my $type   = $self->get_type();
     my $indent = defined $type ? "\t" : '';
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     foreach my $child ( @children ) {
         my $child_output = $child->output();
         $child_output =~ s{^}{$indent}gm;
@@ -349,7 +349,7 @@ sub tags_as_text {
 sub get_projects {
     my $self = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @projects;
     
     foreach my $child ( @children ) {
@@ -363,7 +363,7 @@ sub get_projects {
 sub get_all_projects {
     my $self = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @projects;
     
     foreach my $child ( @children ) {
@@ -378,7 +378,7 @@ sub get_all_projects {
 sub get_tasks {
     my $self = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @tasks;
     
     foreach my $child ( @children ) {
@@ -392,7 +392,7 @@ sub get_tasks {
 sub get_all_tasks {
     my $self = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @tasks;
     
     foreach my $child ( @children ) {
@@ -407,7 +407,7 @@ sub get_all_tasks {
 sub get_notes {
     my $self = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @notes;
     
     foreach my $child ( @children ) {
@@ -421,7 +421,7 @@ sub get_notes {
 sub get_all_notes {
     my $self = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @notes;
     
     foreach my $child ( @children ) {
@@ -460,7 +460,7 @@ sub get_tagged {
     my $tag   = shift;
     my $param = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @tagged;
     
     foreach my $child ( @children ) {
@@ -476,7 +476,7 @@ sub get_all_tagged {
     my $tag   = shift;
     my $param = shift;
     
-    my @children = $self->get_items();
+    my @children = $self->get_lines();
     my @tagged;
     
     foreach my $child ( @children ) {

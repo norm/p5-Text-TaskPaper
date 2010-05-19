@@ -16,7 +16,7 @@ my( $tp, @children, @structure );
     $tp->add_child( type => 'Task', text => 'new task' );
     $tp->add_child( type => 'Task', text => 'second new task' );
     
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 2 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -25,7 +25,7 @@ my( $tp, @children, @structure );
     $tp->add_task( text => 'new task' );
     $tp->add_task( text => 'second new task' );
     
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 2 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -40,7 +40,7 @@ my( $tp, @children, @structure );
     $tp->add_child( type => 'Project', text => 'Big Project' );
     $tp->add_child( type => 'Project', text => 'Bigger Project' );
     
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 2 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -49,7 +49,7 @@ my( $tp, @children, @structure );
     $tp->add_project( text => 'Big Project' );
     $tp->add_project( text => 'Bigger Project' );
     
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 2 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -64,7 +64,7 @@ my( $tp, @children, @structure );
     $tp->add_child( type => 'Note', text => 'something of note' );
     $tp->add_child( type => 'Note', text => 'b#' );
 
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 2 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -73,7 +73,7 @@ my( $tp, @children, @structure );
     $tp->add_note( text => 'something of note' );
     $tp->add_note( text => 'b#' );
 
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 2 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -90,7 +90,7 @@ my( $tp, @children, @structure );
     $tp->add_child( type => 'Task', text => 'new task' );
     $tp->add_child( type => 'Note', text => 'something of note' );
 
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 3 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
@@ -100,7 +100,7 @@ my( $tp, @children, @structure );
     $tp->add_task( text => 'new task' );
     $tp->add_note( text => 'something of note' );
 
-    @children = $tp->get_items();
+    @children = $tp->get_lines();
     ok( scalar @children == 3 );
     is_deeply( \@children, \@structure )
         or print Dumper \@children;
