@@ -1,5 +1,5 @@
 use Modern::Perl;
-use Test::More tests => 18;
+use Test::More tests => 19;
 
 use Text::TaskPaper;
 use Data::Dumper::Concise;
@@ -80,4 +80,10 @@ my( $project, @structure, %tags );
     %tags = $project->get_tags();
     is_deeply( { overdue => [], }, \%tags )
         or print Dumper \%tags;
+}
+
+# projects cannot be created without text
+{
+    $project = Text::TaskPaper::Project->new();
+    ok( !defined $project );
 }

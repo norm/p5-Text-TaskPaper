@@ -1,5 +1,5 @@
 use Modern::Perl;
-use Test::More tests => 18;
+use Test::More tests => 19;
 
 use Text::TaskPaper;
 use Data::Dumper::Concise;
@@ -80,4 +80,10 @@ my( $note, @structure, %tags );
     %tags = $note->get_tags();
     is_deeply( { dull => [], }, \%tags )
         or print Dumper \%tags;
+}
+
+# notes cannot be created without text
+{
+    $note = Text::TaskPaper::Note->new();
+    ok( !defined $note );
 }

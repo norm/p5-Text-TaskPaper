@@ -16,6 +16,16 @@ use constant TYPES => qw( Task Project Note );
 sub new {
     my $class = shift;
     
+    my $self = {
+            children => [],
+            tags     => {},
+        };
+    bless $self, $class;
+    $self->initialise();
+    
+    # no empty types, unless it is the placeholder type "Line"
+    return if $self->{'type'} && 0 == scalar @_;
+    
     my %args;
     if ( 1 == scalar @_ ) {
         $args{'text'} = shift;
@@ -23,14 +33,6 @@ sub new {
     else {
         %args = @_;
     }
-    
-    my $self = {
-            children => [],
-            tags     => {},
-        };
-    bless $self, $class;
-    
-    $self->initialise();
     
     if ( defined $args{'type'} || defined $self->{'type'} ) {
         # append arguments, not overwrite

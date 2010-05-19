@@ -1,5 +1,5 @@
 use Modern::Perl;
-use Test::More tests => 18;
+use Test::More tests => 19;
 
 use Text::TaskPaper;
 use Data::Dumper::Concise;
@@ -80,4 +80,10 @@ my( $task, @structure, %tags );
     %tags = $task->get_tags();
     is_deeply( { due => [], }, \%tags )
         or print Dumper \%tags;
+}
+
+# task objects cannot be created without text
+{
+    $task = Text::TaskPaper::Task->new();
+    ok( !defined $task );
 }
